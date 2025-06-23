@@ -5,7 +5,7 @@
 #include <iomanip>
 #include "types.h"
 
-namespace sdfibm{
+namespace sdfibm {
 
 #define CHECK_BAD_ARGUMENT(expression) \
     if (! (expression)) { \
@@ -68,6 +68,11 @@ inline std::string GetTimeString()
     struct tm *tstruct = localtime(&t);
     strftime(buf, sizeof(buf), "%y/%m/%d %X", tstruct);
     return buf;
+}
+
+inline bool approximateEqual(scalar a, scalar b, scalar tol = 1e-6)
+{
+    return std::abs(a - b) < tol;
 }
 
 }

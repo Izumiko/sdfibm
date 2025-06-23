@@ -86,6 +86,7 @@ private:
     template<class Type>
     Type calcMeanField(Solid& s, IShape* shape, const Foam::GeometricField<Type, Foam::fvPatchField, Foam::volMesh>& field);
 
+    void sanityCheck() const;
 public:
     SolidCloud(const Foam::word& dictfile, Foam::volVectorField& U, scalar time);
     ~SolidCloud();

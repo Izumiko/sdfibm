@@ -2,6 +2,7 @@
 #define MESHINFO_H
 
 #include "fvc.H"
+#include <utility>
 
 namespace sdfibm {
 
@@ -27,7 +28,11 @@ public:
         m_fc(mesh.faceCentres()),
         m_fa(mesh.faceAreas())
     {}
+
+    // Function to get mesh bounding box min and max points
+    std::pair<Foam::point, Foam::point> getMeshBounds() const;
 };
 
 }
+
 #endif // MESHINFO_H

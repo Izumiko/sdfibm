@@ -226,10 +226,13 @@ SolidCloud::SolidCloud(const Foam::word& dictfile, Foam::volVectorField& U, scal
     InitCollisionFuncTable();
 
     initFromDictionary(Foam::word(dictfile));
+
     if (Foam::Pstream::master())
     {
         LOGF << "Totally [" << m_solids.size() << "] solids.\n";
     }
+
+    sanityCheck();
 
     // open output file, overwrite if file exists
     statefile.open("cloud.out", std::fstream::out);
@@ -271,6 +274,29 @@ SolidCloud::~SolidCloud()
     delete m_ptr_ugrid, m_ptr_ugrid = nullptr;
     delete m_ptr_bbox, m_ptr_bbox = nullptr;
     statefile.close();
+}
+
+void SolidCloud::sanityCheck() const
+{
+    if (m_solids.empty())
+    {
+        if (Foam::Pstream::master())
+            LOG("No solid found in the cloud, exiting.");
+        std::exit(1);
+    }
+
+    if (m_ON_TWOD)
+    {
+        auto minmax = m_geotools.getMeshBounds();
+        if (!approximateEqual(minmax.first.z(), -0.5) || !approximateEqual(minmax.second.z(), 0.5))
+        {
+            if (Foam::Pstream::master())
+            {
+                std::cout << "Error: for 2D simulation, the bound of the domain in z must be [-0.5, 0.5], with empty boundary conditions applied there." << std::endl;
+            }
+            std::exit(1);
+        }
+    }
 }
 
 void SolidCloud::initialCorrect()
